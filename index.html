@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<title>Registro Código Infarto</title>
+
+<script src="https://unpkg.com/docx@7.7.0/build/index.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"></link>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>console.log("docx:", window.docx);</script>
+  
+<style>
+
+body{
+font-family: Arial, Helvetica, sans-serif;
+background:#f2f6fa;
+margin:0;
+padding:0;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+background:white;
+padding:30px;
+margin-top:40px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+h1{
+text-align:center;
+color:#b30000;
+}
+
+h2{
+text-align:center;
+margin-bottom:30px;
+color:#444;
+}
+
+h3{
+color:#333;
+}
+
+h4{
+color:#333;
+}
+  
+label{
+font-weight:bold;
+display:block;
+margin-top:15px;
+}
+
+input, textarea{
+width:100%;
+padding:8px;
+margin-top:5px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+.section{
+margin-top:25px;
+padding-top:10px;
+border-top:2px solid #eee;
+}
+
+button{
+margin-top:30px;
+padding:12px;
+border:none;
+background:#b30000;
+color:white;
+font-size:16px;
+border-radius:6px;
+cursor:pointer;
+width:100%;
+}
+
+button:hover{
+background:#800000;
+}
+
+.result{
+background:#eef3ff;
+padding:8px;
+border-radius:5px;
+margin-top:5px;
+}
+
+img{
+margin-top:10px;
+max-width:100%;
+border-radius:8px;
+}
+
+img_2{
+margin-top:10px;
+max-width:100%;
+border-radius:8px;
+}  
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Presentación y evaluación de paciente con sospecha de infarto agudo al miocardio con elevación ST</h1>
+<h2>Hospital Nacional El Salvador</h2>
+
+<label>0. Fecha y hora de llamada</label>
+<input type="datetime-local" id="llamada">
+
+<label>1. Hospital que presenta</label>
+
+<select id="hospital" style="width:100%">
+
+<option></option>
+
+<option>H.N. El Salvador</option>
+<option>H.N. "Dr. Juan Jose Fernandez", Zacamil</option>
+<option>H.N. "Dr. Luis Edmundo Vasquez", Chalatenango</option>
+<option>H.N. Neumologico "Dr. Jose Saldaña"</option>
+<option>H.N. Psiquiatrico "Dr. Jose Molina", Soyapango</option>
+<option>H.N. "Enf. Angelica Vidal", Ilopango</option>
+<option>H.N. "Nuestra Sra de Fatima", Cojutepeque</option>
+<option>H.N. "Dr. Francisco Menéndez", Ahuachapán</option>
+<option>H.N. "Dr. Jorge Mazzini Villacorta", Sonsonate</option>
+<option>H.N. "San Juan de Dios", Santa Ana</option>
+<option>H.N. "Dr. Arturo Morales", Metapán, Santa Ana</option>
+<option>H.N. De Chalchuapa, Santa Ana</option>
+<option>H.N. "San Rafael", Santa Tecla, La Libertad</option>
+<option>H.N. Nueva Concepcion, Chalatenango</option>
+<option>H.N. De Niños "Benjamin Bloom"</option>
+<option>H.N. De La Mujer "Dra. Maria Isabel Rodriguez"</option>
+<option>H.N. De Suchitoto, Cuscatlán</option>
+<option>H.N. "Santa Gertrudis", San Vicente</option>
+<option>H.N. "Santa Teresa", Zacatecoluca, La Paz</option>
+<option>H.N. "San Jerónimo Emiliani", Sensuntepeque</option>
+<option>H.N. "Dr. José Luís Saca", Ilobasco</option>
+<option>H.N. "San Pedro", Usulután</option>
+<option>H.N. De Jiquilisco, Usulután</option>
+<option>H.N. "Dr. Jorge Arturo Mena", Santiago de María</option>
+<option>H.N. "San Juan de Dios", San Miguel</option>
+<option>H.N. Nueva Guadalupe, San Miguel</option>
+<option>H.N. "Monseñor Oscar Arnulfo Romero y Galdámez", Ciudad Barrios</option>
+<option>H.N. "Dr. Héctor Antonio Hernández Flores", San Francisco Gotera</option>
+<option>H.N. De La Unión</option>
+<option>H.N. Santa Rosa de Lima</option>
+<option>H.N. Rosales</option>
+
+</select>
+
+<label>2. Médico que presenta</label>
+<input id="medico">
+
+<label>3. Teléfono de contacto</label>
+<input id="telefono">
+
+<label>4. Nombre del paciente</label>
+<input id="nombre">
+  
+<label>5. Diagnóstico</label>
+
+<select id="diagnostico" multiple="multiple" style="width:100%">
+
+<option>IAMEST SEPTAL</option>
+<option>IAMEST ANTERIOR</option>
+<option>IAMEST INFERIOR</option>
+<option>IAMEST POSTERIOR</option>
+<option>IAMEST LATERAL</option>
+<option>IAMEST DERECHO</option>
+<option>IAM SIN E ST</option>
+
+</select>
+
+<label>6. Día y hora de inicio del dolor</label>
+<input type="datetime-local" id="inicioDolor" onchange="calcularTiempoDolor()">
+
+<label>Tiempo desde inicio del dolor</label>
+<div class="result" id="tiempoDolor">No calculado</div>
+
+<div class="section">
+
+<label for="trombolitico">7. Trombolítico utilizado</label>
+
+<select id="trombolitico" name="trombolitico" onchange="mostrarOtro()">
+  <option value="">Seleccione una opción</option>
+  <option value="ALTEPLASA">ALTEPLASA</option>
+  <option value="TENECTEPLASA">TENECTEPLASA</option>
+  <option value="RETEPLAZA">RETEPLAZA</option>
+  <option value="ESTREPTOQUINASA">ESTREPTOQUINASA</option>
+  <option value="OTRO">OTRO</option>
+</select>
+
+<br><br>
+
+<div id="otroTromboliticoDiv" style="display:none;">
+  <label for="otroTrombolitico">Especifique:</label>
+  <input type="text" id="otroTrombolitico" name="otroTrombolitico">
+</div>
+
+<label>¿A las cuántas horas de dolor?</label>
+<input id="horasDolor">
+
+<label>¿Exitosa?</label>
+<select id="exitosa" style="width:100%">
+
+<option></option>
+<option>SI</option>
+<option>NO</option>  
+
+</select>
+  
+<div class="section">
+
+<h3>8. Datos del paciente</h3>
+
+<label>Edad</label>
+<input id="edad">
+
+<label>Sexo</label>
+<select id="sexo" style="width:100%">
+
+<option></option>
+<option>MASCULINO</option>
+<option>FEMENINO</option>  
+
+</select>
+
+<label>DUI u Hoja de identificación</label>
+<input type="file" id="duiFile" accept="image/*">
+
+<img id="duiPreview" style="display:none">
+  
+<label>Antecedentes médicos relevantes</label>
+<textarea id="antecedentes"></textarea>
+
+</div>
+
+<div class="section">
+
+<h3>9. Síntomas actuales</h3>
+
+<label>Síntomas</label>
+<textarea id="sintomas"></textarea>
+
+<label>Tiempo al PCM</label>
+<input id="pcm">
+
+</div>
+
+<div class="section">
+
+<h3>10. Signos vitales</h3>
+
+<label>Frecuencia cardiaca</label>
+<input id="fc">
+
+<label>Presión arterial</label>
+<input id="pa">
+
+<label>Saturación de oxígeno</label>
+<input id="spo2">
+
+<label>Clasificación Killip-Kimball</label>
+<select id="KILLIP" style="width:100%">
+
+<option></option>
+
+<option>I. SIN S&S DE IC</option>
+<option>II. IC LEVE</option>  
+<option>III. EDEMA AGUDO DE PULMON</option>
+<option>IV. SHOCK CARDIOGENICO</option>
+  
+</select>
+
+<label>Inestabilidad hemodinámica</label>
+<div style="display:flex; align-items:center; gap:10px;">
+
+<select id="ESTABILIDAD" style="width:100%">
+<option></option>
+
+<option>ESTABLE</option>
+<option>INESTABLE</option>  
+  
+</select>
+
+</div>
+
+<div class="section">
+
+<h3>11. Electrocardiograma</h3>
+
+<label>Hallazgos</label>
+<textarea id="hallazgos"></textarea>
+
+<label>Topografía</label>
+<input id="topografia">
+
+<label>Cargar electrocardiograma</label>
+<input type="file" id="ekgFile" accept="image/*">
+
+<img id="ekgPreview" style="display:none">
+
+</div>
+
+<div class="section">
+
+<h3>12. Laboratorios</h3>
+
+<label>Troponina</label>
+<input id="troponina">
+
+<label>CKMB</label>
+<input id="ckmb">
+
+<label>Hemoglobina</label>
+<input id="hb">
+
+<label>Creatinina</label>
+<input id="creatinina">
+
+</div>
+
+<div class="section">
+
+<h3>13. Tratamiento actual</h3>
+
+<label>Medicamento</label>
+<input id="medicamento">
+<label>Dosis de carga</label>
+<div style="display:flex; align-items:center; gap:10px;">
+<select id="dosis" style="width:100%">
+<option></option>
+
+<option>SI</option>
+<option>NO</option>  
+
+</select>
+</div>
+
+<label>¿Cuánto?</label>
+<input id="dosis2">
+
+<label>Otros</label>
+<textarea id="otros_tx"></textarea>
+
+</div>
+
+<div class="section">
+
+<h3>14. Logística y transporte</h3>
+<label>¿Necesita transporte?</label>
+<div style="display:flex; align-items:center; gap:10px;">
+<select id="transorte" style="width:100%">
+<option></option>
+
+<option>SI</option>
+<option>NO</option>  
+
+</select>
+</div>
+
+<div class="section">
+
+<h3>15. Otros</h3>
+
+<label for="contraindi">Contraindicaciones para anticoagulante o trombolítico</label>
+
+<select id="contraindi" name="contraindi" onchange="mostrarOtro_contra()">
+  <option value="">Seleccione una opción</option>
+  <option value="NO">NO</option>
+  <option value="SI">SI</option>
+</select>
+
+<br><br>
+
+<div id="siContraindiDiv" style="display:none;">
+  <label for="siContraindiInput">Especifique:</label>
+  <input type="text" id="siContraindiInput" name="siContraindiInput">
+</div>
+
+</div>  
+  
+<div class="section">
+
+<h3>Resolución</h3>
+
+<textarea id="resolucion"></textarea>
+
+</div>
+
+<div class="section">
+
+<h3>Datos del médico que atiende</h3>
+
+<label>Dr.</label>
+<input id="dr_atiende">
+
+<label>Teléfono</label>
+<input id="tel_atiende">
+
+<h4>EKG</h4>
+
+<img id="ekgFinal">
+
+<h5>DUI U Hoja de identificación</h5>
+
+<img id="duiFinal">
+  
+
+<button type="button" onclick="descargarDocx()">Descargar reporte en Word</button></div>
+
+
+<script>
+
+function calcularTiempoDolor(){
+
+let inicio=document.getElementById("inicioDolor").value;
+
+if(!inicio) return;
+
+let inicioDate=new Date(inicio);
+let ahora=new Date();
+
+let diff=ahora-inicioDate;
+
+let horas=Math.floor(diff/3600000);
+let minutos=Math.floor((diff%3600000)/60000);
+
+document.getElementById("tiempoDolor").innerText=
+horas+" horas "+minutos+" minutos";
+
+}
+
+
+document.getElementById("ekgFile").addEventListener("change",function(){
+
+let file=this.files[0];
+
+if(!file) return;
+
+let reader=new FileReader();
+
+reader.onload=function(e){
+
+document.getElementById("ekgPreview").src=e.target.result;
+document.getElementById("ekgPreview").style.display="block";
+
+document.getElementById("ekgFinal").src=e.target.result;
+
+}
+
+reader.readAsDataURL(file);
+
+});
+
+document.getElementById("duiFile").addEventListener("change",function(){
+
+let file=this.files[0];
+
+if(!file) return;
+
+let reader=new FileReader();
+
+reader.onload=function(e){
+
+document.getElementById("duiPreview").src=e.target.result;
+document.getElementById("duiPreview").style.display="block";
+
+document.getElementById("duiFinal").src=e.target.result;
+
+}
+
+reader.readAsDataURL(file);
+
+});
+  
+
+function val(id){
+return document.getElementById(id)?.value || "";
+}
+
+function check(id){
+return document.getElementById(id)?.checked;
+}
+
+
+function mostrarOtro() {
+  var seleccion = document.getElementById("trombolitico").value;
+  var campoOtro = document.getElementById("otroTromboliticoDiv");
+
+  if (seleccion === "OTRO") {
+    campoOtro.style.display = "block";
+  } else {
+    campoOtro.style.display = "none";
+  }
+}
+
+function mostrarOtro_contra() {
+  var seleccion = document.getElementById("contraindi").value;
+  var campoOtro = document.getElementById("siContraindiDiv");
+
+  if (seleccion === "SI") {
+    campoOtro.style.display = "block";
+  } else {
+    campoOtro.style.display = "none";
+  }
+}  
+  
+$(document).ready(function(){
+
+$('#diagnostico').select2({
+placeholder:"Seleccione diagnóstico(s)",
+allowClear:true
+});
+
+  
+});
+
+</script>
+
+<script>
+
+async function descargarDocx(){
+
+alert("Generando documento...");
+
+try {
+
+// 🔍 Verificar librerías
+if(!window.docx){
+alert("Error: docx.js no cargó");
+return;
+}
+
+if(typeof saveAs === "undefined"){
+alert("Error: FileSaver no cargó");
+return;
+}
+
+const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, ImageRun } = window.docx;
+
+// Helper diagnóstico
+function obtenerDiagnosticos(){
+let select = document.getElementById("diagnostico");
+return Array.from(select.selectedOptions).map(o => o.value);
+}
+
+// Helper para párrafos con saltos reales
+function textoConSaltos(texto){
+return texto.split("\n").map(line => new Paragraph(line));
+}
+
+let children = [];
+
+// TITULO
+children.push(
+new Paragraph({
+text: "REPORTE CÓDIGO INFARTO",
+heading: HeadingLevel.HEADING_1,
+alignment: AlignmentType.CENTER
+})
+);
+
+// FUNCIÓN SECCIÓN
+function addSection(title, content){
+
+children.push(
+new Paragraph({
+text: title,
+heading: HeadingLevel.HEADING_2
+})
+);
+
+content.split("\n").forEach(line=>{
+children.push(new Paragraph(line));
+});
+
+}
+
+// DATOS
+addSection("1. Datos Generales",
+"Fecha llamada: " + val("llamada") + "\n" +
+"Hospital: " + val("hospital") + "\n" +
+"Médico: " + val("medico") + "\n" +
+"Teléfono: " + val("telefono")
+);
+
+// PACIENTE
+addSection("2. Paciente",
+"Nombre: " + val("nombre") + "\n" +
+"Edad: " + val("edad") + "\n" +
+"Sexo: " + val("sexo") + "\n" +
+"Antecedentes: " + val("antecedentes")
+);
+
+// DIAGNOSTICO
+addSection("3. Diagnóstico",
+obtenerDiagnosticos().join(", ")
+);
+
+// TIEMPO
+addSection("4. Tiempo de evolución",
+"Inicio: " + val("inicioDolor") + "\n" +
+"Tiempo: " + document.getElementById("tiempoDolor").innerText
+);
+
+// TROMBOLISIS
+addSection("5. Trombolisis",
+"Trombolítico: " + (val("trombolitico") === "OTRO" ? val("otroTrombolitico") : val("trombolitico")) + "\n" +
+"Horas: " + val("horasDolor") + "\n" +
+"Exitosa: " + val("exitosa")
+);
+
+// SIGNOS
+addSection("6. Signos Vitales",
+"FC: " + val("fc") + "\n" +
+"PA: " + val("pa") + "\n" +
+"SpO2: " + val("spo2") + "\n" +
+"Killip: " + val("KILLIP") + "\n" +
+"Estado: " + val("ESTABILIDAD")
+);
+
+// ECG
+addSection("7. ECG",
+"Hallazgos: " + val("hallazgos") + "\n" +
+"Topografía: " + val("topografia")
+);
+
+// LABS
+addSection("8. Laboratorios",
+"Troponina: " + val("troponina") + "\n" +
+"CKMB: " + val("ckmb") + "\n" +
+"Hb: " + val("hb") + "\n" +
+"Creatinina: " + val("creatinina")
+);
+
+// TRATAMIENTO
+addSection("9. Tratamiento",
+"Medicamento: " + val("medicamento") + "\n" +
+"Dosis: " + val("dosis2") + "\n" +
+"Otros: " + val("otros_tx")
+);
+
+// LOGISTICA
+addSection("10. Logística",
+"Transporte: " + val("transorte")
+);
+
+// CONTRA
+addSection("11. Contraindicaciones",
+val("contraindi") === "SI" ? val("siContraindiInput") : "No"
+);
+
+// RESOLUCION
+addSection("12. Resolución",
+val("resolucion")
+);
+
+// MEDICO
+addSection("13. Médico que atiende",
+"Dr: " + val("dr_atiende") + "\n" +
+"Tel: " + val("tel_atiende")
+);
+
+// IMAGEN
+let ekgBase64 = document.getElementById("ekgFinal").src;
+
+if(ekgBase64 && ekgBase64.startsWith("data:image")){
+
+const base64 = ekgBase64.split(",")[1];
+
+children.push(new Paragraph("Electrocardiograma:"));
+
+children.push(
+new Paragraph({
+children: [
+new ImageRun({
+data: Uint8Array.from(atob(base64), c => c.charCodeAt(0)),
+transformation: { width: 500, height: 300 }
+})
+]
+})
+);
+
+}
+
+let duiBase64 = document.getElementById("duiFinal").src;
+
+if(duiBase64 && duiBase64.startsWith("data:image")){
+
+const base64_d = duiBase64.split(",")[1];
+
+children.push(new Paragraph("DUI O hoja de ID:"));
+
+children.push(
+new Paragraph({
+children: [
+new ImageRun({
+data: Uint8Array.from(atob(base64_d), c => c.charCodeAt(0)),
+transformation: { width: 500, height: 300 }
+})
+]
+})
+);
+
+}  
+
+// DOCUMENTO
+const doc = new Document({
+sections: [{ children }]
+});
+
+// GENERAR
+const blob = await Packer.toBlob(doc);
+
+saveAs(blob, "reporte_codigo_infarto.docx");
+
+} catch(err){
+
+alert("ERROR: " + err.message);
+console.error(err);
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
