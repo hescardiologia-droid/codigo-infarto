@@ -436,6 +436,19 @@ border-radius:8px;
 <label>Teléfono</label>
 <input id="tel_atiende">
 
+<label>Hora programada para cateterismo</label>
+<input id="arrivo">
+
+<label>Transporte</label>
+<select id="ambulancia" style="width:100%">
+
+<option></option>
+<option>Posee ambulancia propia</option>
+<option>Ya se solicito a centro coordinador del SEM</option>
+<option>Se solicita a centro coordinador del SEM</option>  
+
+</select> 
+  
 <h4>EKG</h4>
 
 <img id="ekgFinal">
@@ -447,7 +460,16 @@ border-radius:8px;
 
 <button type="button" onclick="descargarDocx()">Descargar reporte en Word</button></div>
 
-
+<h4>PARA MEDICO QUE PRESENTO EL CASO</h4>
+<div id="mensajePaciente" class="result"></div>
+<button type="button" onclick="generarMensajePaciente()">
+Generar mensaje para médico</button>
+  
+<h4>PARA CHAR DE CODIGO INFARTO</h4>
+<div id="mensajeChat" class="result"></div>
+<button type="button" onclick="generarMensajeChat()">
+Generar mensaje para chat</button>
+  
 <script>
 
 function calcularTiempoDolor(){
@@ -762,6 +784,39 @@ console.error(err);
 
 }
 
+
+function generarMensajePaciente(){
+
+let mensaje = 
+"Su paciente ha sido aceptado para " + val("resolucion") + ", le comparto las indicaciones a seguir:\n\n" +
+"- Llenar el siguiente formulario con la información de su paciente: https://forms.gle/eRAWQZaQwkAWk5JV9\n" +
+"- No hacer referencia por el SIS, hacerlo solamente en físico y entregarlo en sala de cateterismo\n" +
+"- Acudir directamente a portón 1 y luego directamente a sala de cateterismo, sin pasar por la emergencia\n" +
+"- Paciente debe venir acompañado por médico\n" +
+"- Traer consentimiento informado impreso\n" +
+"- Enviar RESUMEN MÉDICO por este medio.";
+
+document.getElementById("mensajePaciente").innerText = mensaje;
+
+}
+
+function generarMensajeChat(){
+
+let mensaje = 
+"Se ACEPTA paciente: " + val("nombre") + "\n" +
+"Para: " + val("resolucion") + "\n" +
+"Desde: " + val("hospital") + "\n" +
+"A: Sala de Cateterismo HNES, entrar por el porton 1 ir directo a Sala de Cateterismo" + "\n\n" +
+"Hora estimada de llegada: " + val("arrivo") + "\n\n" +
+"Diagnostico: " + val("diagnostico") + "\n\n" +
+"Transporte: " + val("ambulancia") + "\n" +
+"Medico de contacto: " + val("medico") + "Telefono de contacto" + val("telefono")
+;
+
+document.getElementById("mensajeChat").innerText = mensaje;
+
+}
+  
 </script>
 
 </body>
