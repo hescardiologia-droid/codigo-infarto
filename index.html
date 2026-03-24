@@ -642,7 +642,7 @@ addSection("1. Datos Generales",
 "Fecha llamada: " + val("llamada") + "\n" +
 "Hospital: " + val("hospital") + "\n" +
 "Médico: " + val("medico") + "\n" +
-"Teléfono: " + val("telefono")
+"Teléfono: " + val("telefono") + "\n"
 );
 
 // PACIENTE
@@ -650,25 +650,25 @@ addSection("2. Paciente",
 "Nombre: " + val("nombre") + "\n" +
 "Edad: " + val("edad") + "\n" +
 "Sexo: " + val("sexo") + "\n" +
-"Antecedentes: " + val("antecedentes")
+"Antecedentes: " + val("antecedentes") + "\n"
 );
 
 // DIAGNOSTICO
 addSection("3. Diagnóstico",
-obtenerDiagnosticos().join(", ")
+obtenerDiagnosticos().join(", ") + "\n"
 );
 
 // TIEMPO
 addSection("4. Tiempo de evolución",
 "Inicio: " + val("inicioDolor") + "\n" +
-"Tiempo: " + document.getElementById("tiempoDolor").innerText
+"Tiempo: " + document.getElementById("tiempoDolor").innerText + "\n"
 );
 
 // TROMBOLISIS
 addSection("5. Trombolisis",
 "Trombolítico: " + (val("trombolitico") === "OTRO" ? val("otroTrombolitico") : val("trombolitico")) + "\n" +
 "Horas: " + val("horasDolor") + "\n" +
-"Exitosa: " + val("exitosa")
+"Exitosa: " + val("exitosa") + "\n"
 );
 
 // SIGNOS
@@ -677,13 +677,13 @@ addSection("6. Signos Vitales",
 "PA: " + val("pa") + "\n" +
 "SpO2: " + val("spo2") + "\n" +
 "Killip: " + val("KILLIP") + "\n" +
-"Estado: " + val("ESTABILIDAD")
+"Estado: " + val("ESTABILIDAD") + "\n"
 );
 
 // ECG
 addSection("7. ECG",
 "Hallazgos: " + val("hallazgos") + "\n" +
-"Topografía: " + val("topografia")
+"Topografía: " + val("topografia") + "\n"
 );
 
 // LABS
@@ -691,35 +691,35 @@ addSection("8. Laboratorios",
 "Troponina: " + val("troponina") + "\n" +
 "CKMB: " + val("ckmb") + "\n" +
 "Hb: " + val("hb") + "\n" +
-"Creatinina: " + val("creatinina")
+"Creatinina: " + val("creatinina") + "\n"
 );
 
 // TRATAMIENTO
 addSection("9. Tratamiento",
 "Medicamento: " + val("medicamento") + "\n" +
 "Dosis: " + val("dosis2") + "\n" +
-"Otros: " + val("otros_tx")
+"Otros: " + val("otros_tx") + "\n"
 );
 
 // LOGISTICA
-addSection("10. Logística",
-"Transporte: " + val("transorte")
+addSection("10. Logística y transporte",
+"¿Necesita transporte? " + val("transorte") + val("ambulancia") + "\n"
 );
 
 // CONTRA
-addSection("11. Contraindicaciones",
-val("contraindi") === "SI" ? val("siContraindiInput") : "No"
+addSection("11. Contraindicaciones para el uso de trombolitico o anticoagulante",
+val("contraindi") === "SI" ? val("siContraindiInput") : "No" + "\n"
 );
 
 // RESOLUCION
 addSection("12. Resolución",
-val("resolucion")
+"Paciente se acepta para: " + val("resolucion") + "\n"
 );
 
 // MEDICO
 addSection("13. Médico que atiende",
 "Dr: " + val("dr_atiende") + "\n" +
-"Tel: " + val("tel_atiende")
+"Tel: " + val("tel_atiende") + "\n"
 );
 
 // IMAGEN
