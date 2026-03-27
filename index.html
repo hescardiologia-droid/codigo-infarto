@@ -226,6 +226,7 @@ border-radius:8px;
   <option value="RETEPLAZA">RETEPLAZA</option>
   <option value="ESTREPTOQUINASA">ESTREPTOQUINASA</option>
   <option value="OTRO">OTRO</option>
+  <option value="NO SE TROMBOLIZO">NO SE TROMBOLIZO</option>
 </select>
 
 <br><br>
@@ -362,8 +363,6 @@ border-radius:8px;
 
 <h3>13. Tratamiento actual</h3>
 
-<label>Medicamento</label>
-<input id="medicamento">
 <label>Dosis de carga</label>
 <div style="display:flex; align-items:center; gap:10px;">
 <select id="dosis" style="width:100%">
@@ -374,9 +373,12 @@ border-radius:8px;
 
 </select>
 </div>
+  
+<label>Acido Acetilsalicilico</label>
+<input id="aspirina">
 
-<label>¿Cuánto?</label>
-<input id="dosis2">
+<label>Clopidogrel</label>
+<input id="clopidogrel">
 
 <label>Otros</label>
 <textarea id="otros_tx"></textarea>
@@ -424,6 +426,9 @@ border-radius:8px;
 
 <textarea id="resolucion"></textarea>
 
+<label>Comentarios e indicaciones extras</label>
+<input id="comentarios">
+  
 </div>
 
 <div class="section">
@@ -696,8 +701,9 @@ addSection("8. Laboratorios",
 
 // TRATAMIENTO
 addSection("9. Tratamiento",
-"Medicamento: " + val("medicamento") + "\n" +
-"Dosis: " + val("dosis2") + "\n" +
+"¿Se aplicacion dosis de carga?: " + val("dosis") + "\n" +
+"Acido AcetilSalicilico: " + val("aspirina") + "\n" +
+"Clopidogrel: " + val("clopidogrel") + "\n" +
 "Otros: " + val("otros_tx") + "\n"
 );
 
