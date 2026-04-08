@@ -348,10 +348,15 @@ border-radius:8px;
 <label>Topografía</label>
 <input id="topografia">
 
-<label>Cargar electrocardiograma</label>
+<label>Electrocardiograma Inicial</label>
 <input type="file" id="ekgFile" accept="image/*">
 
 <img id="ekgPreview" style="display:none">
+
+<label>Electrocardiograma Control o Post-trombolisis</label>
+<input type="file" id="ecgconFile" accept="image/*">
+
+<img id="ecgconPreview" style="display:none">
 
 </div>
 
@@ -472,6 +477,10 @@ border-radius:8px;
 
 <img id="ekgFinal">
 
+<h4>EKG control o post-trombolisis</h4>
+
+<img id="ecgconFinal">
+
 <h5>DUI U Hoja de identificación</h5>
 
 <img id="duiFinal">
@@ -531,6 +540,27 @@ document.getElementById("ekgFinal").src=e.target.result;
 reader.readAsDataURL(file);
 
 });
+
+document.getElementById("ecgconFile").addEventListener("change",function(){
+
+let file=this.files[0];
+
+if(!file) return;
+
+let reader=new FileReader();
+
+reader.onload=function(e){
+
+document.getElementById("ecgconPreview").src=e.target.result;
+document.getElementById("ecgconPreview").style.display="block";
+
+document.getElementById("ecgconFinal").src=e.target.result;
+
+}
+
+reader.readAsDataURL(file);
+
+});  
 
 document.getElementById("duiFile").addEventListener("change",function(){
 
@@ -766,6 +796,27 @@ transformation: { width: 500, height: 300 }
 
 }
 
+let ecgconBase64 = document.getElementById("ecgconFinal").src;
+
+if(ecgconBase64 && ecgconBase64.startsWith("data:image")){
+
+const base64 = ecgconBase64.split(",")[1];
+
+children.push(new Paragraph("Electrocardiograma control o Post-trombolisis:"));
+
+children.push(
+new Paragraph({
+children: [
+new ImageRun({
+data: Uint8Array.from(atob(base64), c => c.charCodeAt(0)),
+transformation: { width: 500, height: 300 }
+})
+]
+})
+);
+
+}
+  
 let duiBase64 = document.getElementById("duiFinal").src;
 
 if(duiBase64 && duiBase64.startsWith("data:image")){
