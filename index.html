@@ -843,7 +843,7 @@ new Paragraph({
 children: [
 new ImageRun({
 data: Uint8Array.from(atob(base64_d), c => c.charCodeAt(0)),
-transformation: { width: 500, height: 500 } // 
+transformation: { width: 600, height: 400 } // 
 })
 ]
 })
@@ -876,25 +876,18 @@ const base64_d = fixedBase64.split(",")[1];
 
 children.push(new Paragraph("DUI O hoja de ID:"));
 
-const anchoOriginal = img.width;
-const altoOriginal = img.height;
-
-const nuevoAncho = 500;
-const nuevoAlto = (altoOriginal / anchoOriginal) * nuevoAncho;
-
 children.push(
 new Paragraph({
 children: [
 new ImageRun({
 data: Uint8Array.from(atob(base64_d), c => c.charCodeAt(0)),
-transformation: { 
-  width: nuevoAncho, 
-  height: Math.round(nuevoAlto) 
-}
+transformation: { width: 500, height: 500 } // 
 })
 ]
 })
 );
+
+}
 
 // DOCUMENTO
 const doc = new Document({
