@@ -780,7 +780,7 @@ let ekgBase64 = document.getElementById("ekgFinal").src;
 if(ekgBase64 && ekgBase64.startsWith("data:image")){
 
 const img = new Image();
-img.src = duiBase64;
+img.src = ekgBase64;
 
 await new Promise(resolve => {
   img.onload = resolve;
@@ -798,7 +798,7 @@ const fixedBase64 = canvas.toDataURL("image/jpeg");
 
 const base64_d = fixedBase64.split(",")[1];
 
-children.push(new Paragraph("DUI O hoja de ID:"));
+children.push(new Paragraph("Electrocardiograma inicial: "));
 
 children.push(
 new Paragraph({
@@ -818,7 +818,7 @@ let ecgconBase64 = document.getElementById("ecgconFinal").src;
 if(ecgconBase64 && ecgconBase64.startsWith("data:image")){
 
 const img = new Image();
-img.src = duiBase64;
+img.src = ecgconBase64;
 
 await new Promise(resolve => {
   img.onload = resolve;
@@ -836,7 +836,7 @@ const fixedBase64 = canvas.toDataURL("image/jpeg");
 
 const base64_d = fixedBase64.split(",")[1];
 
-children.push(new Paragraph("DUI O hoja de ID:"));
+children.push(new Paragraph("Electrocardiograma control o post-trombolisis"));
 
 children.push(
 new Paragraph({
