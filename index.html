@@ -779,16 +779,33 @@ let ekgBase64 = document.getElementById("ekgFinal").src;
 
 if(ekgBase64 && ekgBase64.startsWith("data:image")){
 
-const base64 = ekgBase64.split(",")[1];
+const img = new Image();
+img.src = duiBase64;
 
-children.push(new Paragraph("Electrocardiograma:"));
+await new Promise(resolve => {
+  img.onload = resolve;
+});
+
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = img.width;
+canvas.height = img.height;
+
+ctx.drawImage(img, 0, 0);
+
+const fixedBase64 = canvas.toDataURL("image/jpeg");
+
+const base64_d = fixedBase64.split(",")[1];
+
+children.push(new Paragraph("DUI O hoja de ID:"));
 
 children.push(
 new Paragraph({
 children: [
 new ImageRun({
-data: Uint8Array.from(atob(base64), c => c.charCodeAt(0)),
-transformation: { width: 500, height: 300 }
+data: Uint8Array.from(atob(base64_d), c => c.charCodeAt(0)),
+transformation: { width: 500 } // 
 })
 ]
 })
@@ -800,16 +817,33 @@ let ecgconBase64 = document.getElementById("ecgconFinal").src;
 
 if(ecgconBase64 && ecgconBase64.startsWith("data:image")){
 
-const base64 = ecgconBase64.split(",")[1];
+const img = new Image();
+img.src = duiBase64;
 
-children.push(new Paragraph("Electrocardiograma control o Post-trombolisis:"));
+await new Promise(resolve => {
+  img.onload = resolve;
+});
+
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = img.width;
+canvas.height = img.height;
+
+ctx.drawImage(img, 0, 0);
+
+const fixedBase64 = canvas.toDataURL("image/jpeg");
+
+const base64_d = fixedBase64.split(",")[1];
+
+children.push(new Paragraph("DUI O hoja de ID:"));
 
 children.push(
 new Paragraph({
 children: [
 new ImageRun({
-data: Uint8Array.from(atob(base64), c => c.charCodeAt(0)),
-transformation: { width: 500, height: 300 }
+data: Uint8Array.from(atob(base64_d), c => c.charCodeAt(0)),
+transformation: { width: 500 } // 
 })
 ]
 })
@@ -821,7 +855,24 @@ let duiBase64 = document.getElementById("duiFinal").src;
 
 if(duiBase64 && duiBase64.startsWith("data:image")){
 
-const base64_d = duiBase64.split(",")[1];
+const img = new Image();
+img.src = duiBase64;
+
+await new Promise(resolve => {
+  img.onload = resolve;
+});
+
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = img.width;
+canvas.height = img.height;
+
+ctx.drawImage(img, 0, 0);
+
+const fixedBase64 = canvas.toDataURL("image/jpeg");
+
+const base64_d = fixedBase64.split(",")[1];
 
 children.push(new Paragraph("DUI O hoja de ID:"));
 
@@ -830,13 +881,13 @@ new Paragraph({
 children: [
 new ImageRun({
 data: Uint8Array.from(atob(base64_d), c => c.charCodeAt(0)),
-transformation: { width: 500, height: 300 }
+transformation: { width: 500 } // 
 })
 ]
 })
 );
 
-}  
+}
 
 // DOCUMENTO
 const doc = new Document({
