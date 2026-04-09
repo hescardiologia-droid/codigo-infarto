@@ -662,21 +662,31 @@ return texto.split("\n").map(line => new Paragraph(line));
 let children = [];
 
 // TITULO
-children.push(
 new Paragraph({
+children: [
+new TextRun({
 text: "REPORTE CÓDIGO INFARTO",
-heading: HeadingLevel.HEADING_1,
+bold: true,
+size: 16,
+color: "000000"
+})
+],
 alignment: AlignmentType.CENTER
 })
-);
 
 // FUNCIÓN SECCIÓN
 function addSection(title, content){
 
 children.push(
 new Paragraph({
+children: [
+new TextRun({
 text: title,
-heading: HeadingLevel.HEADING_2
+bold: true,
+size: 13, // 
+color: "000000" // 
+})
+]
 })
 );
 
