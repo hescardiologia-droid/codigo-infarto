@@ -662,12 +662,11 @@ return texto.split("\n").map(line => new Paragraph(line));
 let children = [];
 
 // TITULO
+children.push(
 new Paragraph({
-children: [
-new TextRun({
 text: "REPORTE CÓDIGO INFARTO",
 bold: true,
-size: 16,
+size: 36,
 color: "000000"
 })
 ],
@@ -683,7 +682,7 @@ children: [
 new TextRun({
 text: title,
 bold: true,
-size: 13, // 
+size: 28, // 
 color: "000000" // 
 })
 ]
