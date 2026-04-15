@@ -282,6 +282,11 @@ border-radius:8px;
 <input type="file" id="duiFile" accept="image/*">
 
 <img id="duiPreview" style="display:none">
+
+<label>Reverso del DUI</label>
+<input type="file" id="reversoFile" accept="image/*">
+
+<img id="reversoPreview" style="display:none"> 
   
 <label>Antecedentes médicos relevantes</label>
 <textarea id="antecedentes"></textarea>
@@ -307,12 +312,18 @@ border-radius:8px;
 <label>Frecuencia cardiaca</label>
 <input id="fc">
 
+<label>Frecuencia respiratoria</label>
+<imput id="fr">
+  
 <label>Presión arterial</label>
 <input id="pa">
 
 <label>Saturación de oxígeno</label>
 <input id="spo2">
 
+<label>Llenado capilar</label>
+<input id="capilar">
+  
 <label>Clasificación Killip-Kimball</label>
 <select id="KILLIP" style="width:100%">
 
@@ -484,7 +495,10 @@ border-radius:8px;
 <h5>DUI U Hoja de identificación</h5>
 
 <img id="duiFinal">
-  
+
+<h5>Reverso del DUI</h5>
+
+<img id="reversoFinal">
 
 <button type="button" onclick="descargarDocx()">Descargar reporte en Word</button></div>
 
@@ -541,6 +555,7 @@ reader.readAsDataURL(file);
 
 });
 
+
 document.getElementById("ecgconFile").addEventListener("change",function(){
 
 let file=this.files[0];
@@ -562,6 +577,7 @@ reader.readAsDataURL(file);
 
 });  
 
+
 document.getElementById("duiFile").addEventListener("change",function(){
 
 let file=this.files[0];
@@ -576,6 +592,28 @@ document.getElementById("duiPreview").src=e.target.result;
 document.getElementById("duiPreview").style.display="block";
 
 document.getElementById("duiFinal").src=e.target.result;
+
+}
+
+reader.readAsDataURL(file);
+
+});
+
+
+document.getElementById("reversoFile").addEventListener("change",function(){
+
+let file=this.files[0];
+
+if(!file) return;
+
+let reader=new FileReader();
+
+reader.onload=function(e){
+
+document.getElementById("reversoPreview").src=e.target.result;
+document.getElementById("reversoPreview").style.display="block";
+
+document.getElementById("reversoFinal").src=e.target.result;
 
 }
 
@@ -862,6 +900,45 @@ if(duiBase64 && duiBase64.startsWith("data:image")){
 
 const img = new Image();
 img.src = duiBase64;
+
+await new Promise(resolve => {
+  img.onload = resolve;
+});
+
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = img.width;
+canvas.height = img.height;
+
+ctx.drawImage(img, 0, 0);
+
+const fixedBase64 = canvas.toDataURL("image/jpeg");
+
+const base64_d = fixedBase64.split(",")[1];
+
+children.push(new Paragraph("DUI O hoja de ID:"));
+
+children.push(
+new Paragraph({
+children: [
+new ImageRun({
+data: Uint8Array.from(atob(base64_d), c => c.charCodeAt(0)),
+transformation: { width: 600, height: 600 } // 
+})
+]
+})
+);
+
+}
+
+
+let reversoBase64 = document.getElementById("reversoFinal").src;
+
+if(reversoBase64 && reversoBase64.startsWith("data:image")){
+
+const img = new Image();
+img.src = reversoBase64;
 
 await new Promise(resolve => {
   img.onload = resolve;
