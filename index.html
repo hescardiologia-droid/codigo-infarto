@@ -483,6 +483,16 @@ border-radius:8px;
 <option>Se solicita a centro coordinador del SEM</option>  
 
 </select> 
+
+<label>Destino</label>
+<select id="destino" style="width:100%">
+
+<option></option>
+<option>Sala de Cateterismo HNES, por porton 1, sin pasar por Emergencias</option>
+<option>Unidad de Emergencia HNES y posterior ingreso a Servicio de Cardiologia</option>
+<option>Unidad de Emergencia HNES y posterior ingreso a Unidad de Cuidados Intensivos</option>  
+
+</select> 
   
 <h4>EKG</h4>
 
@@ -1020,7 +1030,7 @@ let mensaje =
 "Se ACEPTA paciente: " + val("nombre") + "\n" +
 "Para: " + val("resolucion") + "\n" +
 "Desde: " + val("hospital") + "\n" +
-"A: Sala de Cateterismo HNES, entrar por el porton 1 ir directo a Sala de Cateterismo" + "\n\n" +
+"A: " + val("destino") + "\n\n" +
 "Hora estimada de llegada: " + val("arrivo") + "\n\n" +
 "Diagnostico: " + val("diagnostico") + "\n\n" +
 "Transporte: " + val("ambulancia") + "\n" +
