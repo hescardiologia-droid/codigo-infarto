@@ -223,6 +223,12 @@ border-radius:8px;
 <label>Tiempo desde inicio del dolor</label>
 <div class="result" id="tiempoDolor">No calculado</div>
 
+<label>Dia y Hora que llego al centro asistencial</label>
+<input type="datetime-local" id="fechaconsulta" onchange="calcularHoraContacto()">
+  
+<label>Tiempo desde el inicio del dolor al primer contacto medico</label>
+<div class="result" id="horaContacto">No calculado</div>
+  
 <div class="section">
 
 <label for="trombolitico">7. Trombolítico utilizado</label>
@@ -244,10 +250,16 @@ border-radius:8px;
   <input type="text" id="otroTrombolitico" name="otroTrombolitico">
 </div>
 
-<label>¿A las cuántas horas de dolor?</label>
-<input id="horasDolor">
+<label>Dia y Hora en que se inicio el trombolitico</label>
+<input type="datetime-local" id="fechatrombo" onchange="calcularHoraDolor(); calcularPcmtrombo()">
+  
+<label>Tiempo desde el inicio del dolor hasta la trombolisis</label>
+<div class="result" id="horaDolor">No calculado</div>
 
-<label>¿Exitosa?</label>
+<label>Tiempo desde el PCM hasta la trombolisis</label>
+<div class="result" id="pcmtrombo">No calculado</div>
+  
+<label>¿Exitosa? hubo disminucion del segmento ST en derivaciones afectadas</label>
 <select id="exitosa" style="width:100%">
 
 <option></option>
@@ -300,8 +312,7 @@ border-radius:8px;
 <label>Síntomas</label>
 <textarea id="sintomas"></textarea>
 
-<label>Tiempo al PCM</label>
-<input id="pcm">
+
 
 </div>
 
@@ -353,6 +364,12 @@ border-radius:8px;
 
 <h3>11. Electrocardiograma</h3>
 
+<label>Hora en que se tomo el EKG</label>
+<input type="datetime-local" id="fechaEkg" onchange="calcularHoraEkg()">
+  
+<label>Tiempo desde el PCM a la toma del EKG</label>
+<div class="result" id="horaEkg">No calculado</div>
+  
 <label>Hallazgos</label>
 <textarea id="hallazgos"></textarea>
 
@@ -542,7 +559,119 @@ document.getElementById("tiempoDolor").innerText=
 horas+" horas "+minutos+" minutos";
 
 }
+  
 
+function calcularHoraDolor() {
+
+  let inicio = document.getElementById("inicioDolor").value;
+  let trombo = document.getElementById("fechatrombo").value;
+
+  if (!inicio || !trombo) {
+    document.getElementById("horaDolor").innerText = "No calculado";
+    return;
+  }
+
+  let inicioDate = new Date(inicio);
+  let tromboDate = new Date(trombo);
+
+  let diff = tromboDate - inicioDate;
+
+  if (diff < 0) {
+    document.getElementById("horaDolor").innerText =
+      "Error: la trombólisis no puede ser antes del inicio del dolor";
+    return;
+  }
+
+  let horas = Math.floor(diff / 3600000);
+  let minutos = Math.floor((diff % 3600000) / 60000);
+
+  document.getElementById("horaDolor").innerText =
+    horas + " horas " + minutos + " minutos";
+}
+  
+function calcularPcmtrombo() {
+
+  let inicio = document.getElementById("fechaconsulta").value;
+  let trombo = document.getElementById("fechatrombo").value;
+
+  if (!inicio || !trombo) {
+    document.getElementById("pcmtrombo").innerText = "No calculado";
+    return;
+  }
+
+  let inicioDate = new Date(inicio);
+  let tromboDate = new Date(trombo);
+
+  let diff = tromboDate - inicioDate;
+
+  if (diff < 0) {
+    document.getElementById("pcmtrombo").innerText =
+      "Error: la trombólisis no puede ser antes del inicio del dolor";
+    return;
+  }
+
+  let horas = Math.floor(diff / 3600000);
+  let minutos = Math.floor((diff % 3600000) / 60000);
+
+  document.getElementById("pcmtrombo").innerText =
+    horas + " horas " + minutos + " minutos";
+}  
+
+function calcularHoraContacto() {
+
+  let inicio = document.getElementById("inicioDolor").value;
+  let trombo = document.getElementById("fechaconsulta").value;
+
+  if (!inicio || !trombo) {
+    document.getElementById("horaContacto").innerText = "No calculado";
+    return;
+  }
+
+  let inicioDate = new Date(inicio);
+  let tromboDate = new Date(trombo);
+
+  let diff = tromboDate - inicioDate;
+
+  if (diff < 0) {
+    document.getElementById("horaContacto").innerText =
+      "Error: el PCM no puede ser antes del inicio del dolor";
+    return;
+  }
+
+  let horas = Math.floor(diff / 3600000);
+  let minutos = Math.floor((diff % 3600000) / 60000);
+
+  document.getElementById("horaContacto").innerText =
+    horas + " horas " + minutos + " minutos";
+}
+
+function calcularHoraEkg() {
+
+  let inicio = document.getElementById("fechaconsulta").value;
+  let trombo = document.getElementById("fechaEkg").value;
+
+  if (!inicio || !trombo) {
+    document.getElementById("horaEkg").innerText = "No calculado";
+    return;
+  }
+
+  let inicioDate = new Date(inicio);
+  let tromboDate = new Date(trombo);
+
+  let diff = tromboDate - inicioDate;
+
+  if (diff < 0) {
+    document.getElementById("horaEkg").innerText =
+      "Error: el EKG no puede ser antes del PCM";
+    return;
+  }
+
+  let horas = Math.floor(diff / 3600000);
+  let minutos = Math.floor((diff % 3600000) / 60000);
+
+  document.getElementById("horaEkg").innerText =
+    horas + " horas " + minutos + " minutos";
+}  
 
 document.getElementById("ekgFile").addEventListener("change",function(){
 
@@ -712,7 +841,7 @@ let children = [];
 // TITULO
 children.push(
 new Paragraph({
-text: "REPORTE CÓDIGO INFARTO",
+text: "REPORTE CÓDIGO INFARTO"+ "\n" + val("nombre"),
 heading: HeadingLevel.HEADING_1,
 alignment: AlignmentType.CENTER
 })
@@ -740,25 +869,25 @@ children.push(new Paragraph(line));
 }
 
 // DATOS
-addSection("1. Datos Generales",
-"Fecha llamada: " + val("llamada") + "\n" +
-"Hospital: " + val("hospital") + "\n" +
-"Médico: " + val("medico") + "\n" +
-"Teléfono: " + val("telefono") + "\n"
+addSection("1. Datos de referencia:",
+"- Fecha y hora de la llamada: " + val("llamada") + "\n" +
+"- Hospital que presenta: " + val("hospital") + "\n" +
+"- Médico que refiere: " + val("medico") + "\n" +
+"- Teléfono de contacto: " + val("telefono") + "\n"
 );
 
 // PACIENTE
-addSection("2. Paciente",
-"Nombre: " + val("nombre") + "\n" +
-"Edad: " + val("edad") + "\n" +
-"Sexo: " + val("sexo") + "\n" +
-"Peso: " + val("peso") + "\n" +
-"Talla: " + val("talla") + "\n" +
-"Antecedentes: " + val("antecedentes") + "\n"
+addSection("2. Informacion del paciente:",
+"- Nombre: " + val("nombre") + "\n" +
+"- Edad: " + val("edad") + "\n" +
+"- Sexo: " + val("sexo") + "\n" +
+"- Peso: " + val("peso") + "\n" +
+"- Talla: " + val("talla") + "\n" +
+"- Antecedentes: " + val("antecedentes") + "\n"
 );
 
 // DIAGNOSTICO
-addSection("3. Diagnóstico",
+addSection("3. Diagnóstico: ",
 obtenerDiagnosticos().join(", ") + "\n"
 );
 
@@ -770,30 +899,30 @@ addSection("4. Tiempo de evolución",
 
 // TROMBOLISIS
 addSection("5. Trombolisis",
-"Trombolítico: " + (val("trombolitico") === "OTRO" ? val("otroTrombolitico") : val("trombolitico")) + "\n" +
-"Horas: " + val("horasDolor") + "\n" +
+"Trombolítico utilizado: " + (val("trombolitico") === "OTRO" ? val("otroTrombolitico") : val("trombolitico")) + "\n" +
+"con cuantas horas de dolor se trombolizo: " + val("horasDolor") + "\n" +
 "Exitosa: " + val("exitosa") + "\n"
 );
 
 // SIGNOS
 addSection("6. Signos Vitales",
-"FC: " + val("fc") + "\n" +
-"PA: " + val("pa") + "\n" +
-"FR: " + val("fr") + "\n" +
-"SpO2: " + val("spo2") + "\n" +
+"Frecuencia cardiaca: " + val("fc") + "\n" +
+"Presion arterial: " + val("pa") + "\n" +
+"Frecuencia respiratoria: " + val("fr") + "\n" +
+"Ssaturacion de Oxigeno: " + val("spo2") + "\n" +
 "Tiempo de llenado capilar: " + val("capilar") + "\n" +
-"Killip: " + val("KILLIP") + "\n" +
-"Estado: " + val("ESTABILIDAD") + "\n"
+"Killip and Kimball: " + val("KILLIP") + "\n" +
+"Estabilidad hemodinamica: " + val("ESTABILIDAD") + "\n"
 );
 
 // ECG
-addSection("7. ECG",
-"Hallazgos: " + val("hallazgos") + "\n" +
+addSection("7. Electrocardiograma",
+"Hallazgos electrocardiograficos: " + val("hallazgos") + "\n" +
 "Topografía: " + val("topografia") + "\n"
 );
 
 // LABS
-addSection("8. Laboratorios",
+addSection("8. Examenes de Laboratorios",
 "Troponina: " + val("troponina") + "\n" +
 "CKMB: " + val("ckmb") + "\n" +
 "Hb: " + val("hb") + "\n" +
@@ -801,7 +930,7 @@ addSection("8. Laboratorios",
 );
 
 // TRATAMIENTO
-addSection("9. Tratamiento",
+addSection("9. Tratamiento farmacologico al momento que se presenta:",
 "¿Se aplicacion dosis de carga?: " + val("dosis") + "\n" +
 "Acido AcetilSalicilico: " + val("aspirina") + "\n" +
 "Clopidogrel: " + val("clopidogrel") + "\n" +
@@ -829,6 +958,15 @@ addSection("13. Médico que atiende",
 "Tel: " + val("tel_atiende") + "\n"
 );
 
+// CONTROLES DE CALIDAD
+addSection("Control Tiempos de Calidad",
+"Tiempo desde inicio del dolor al momento que se presenta el paciente para cateterismo cardiaco: " + val("tiempoDolor") + "\n",
+"Tiempo desde el inicio del dolor al primer contacto medico: " + val("horaContacto") + "\n",
+"Tiempo desde el inicio del dolor hasta la trombolisis: " + val("horaDolor") + "\n",
+"Tiempo desde el PCM hasta la trombolisis: " + val("pcmtrombo") + "\n",
+"Tiempo desde el PCM a la toma del EKG: " + val("horaEkg") + "\n"
+);           
+  
 // IMAGEN
 let ekgBase64 = document.getElementById("ekgFinal").src;
 
@@ -1009,8 +1147,8 @@ let mensaje =
 "Su paciente ha sido aceptado para " + val("resolucion") + ", le comparto las indicaciones a seguir:\n\n" +
 "- Llenar el siguiente formulario con la información de su paciente: https://forms.gle/eRAWQZaQwkAWk5JV9\n" +
 "- No hacer referencia por el SIS, hacerlo solamente en físico y entregarlo en sala de cateterismo\n" +
-"- Acudir directamente a portón 1 y luego directamente a sala de cateterismo, sin pasar por la emergencia\n" +
-"- Paciente debe venir acompañado por médico\n" +
+"- " + val("destino") + "\n" +
+"- Paciente debe venir acompañado por médico y personal de enfermeria.\n" +
 "- Traer consentimiento informado impreso y firmado por el paciente y|o familiar responsable\n" +
 "- Explicar adecuadamente al paciente el procedimiento al que sera sometido\n" +
 "- Un familiar responsable puede acompañar al paciente en la ambulancia si estuviese disponible y fuese posible (no es obligatorio)\n" +
