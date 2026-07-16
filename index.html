@@ -209,9 +209,9 @@ border-radius:8px;
 <option>IAMCEST INFERIO-POSTERIOR</option>
 <option>IAMCEST POSTERIOR</option>
 <option>IAMCEST POSTERIO-LATERAL</option>
+<option>IAMCEST LATERAL</option>
 <option>IAMCEST LATERAL BAJA</option>
 <option>IAMCEST LATERAL ALTA</option>
-<option>IAMCEST LATERAL EXTENSO</option>
 <option>IAMCEST DERECHO</option>
 <option>IAM SIN E ST</option>
   
@@ -369,12 +369,6 @@ border-radius:8px;
   
 <label>Tiempo desde el PCM a la toma del EKG</label>
 <div class="result" id="horaEkg">No calculado</div>
-  
-<label>Hallazgos</label>
-<textarea id="hallazgos"></textarea>
-
-<label>Topografía</label>
-<input id="topografia">
 
 <label>Electrocardiograma Inicial</label>
 <input type="file" id="ekgFile" accept="image/*">
@@ -917,9 +911,9 @@ addSection("6. Signos Vitales",
 
 // ECG
 addSection("7. Electrocardiograma",
-"Hallazgos electrocardiograficos: " + val("hallazgos") + "\n" +
-"Topografía: " + val("topografia") + "\n"
-);
+"Hallazgos electrocardiograficos: " + "\n" +
+obtenerDiagnosticos().join(", ") + "\n"
+)
 
 // LABS
 addSection("8. Examenes de Laboratorios",
@@ -1154,8 +1148,7 @@ let mensaje =
 "- Un familiar responsable puede acompañar al paciente en la ambulancia si estuviese disponible y fuese posible (no es obligatorio)\n" +
 "- Enviar RESUMEN MÉDICO por este medio.\n" +
 "- El paciente debe acudir rasurado de ambas ingles y ambas muñecas.\n" +
-"- Si el paciente tiene goteo de nitroglicerina, traer con dos accesos venosos un N°18 y un N°20°.\n" +
-"- Si el paciente se encuentra con aminas, colocar CVC.\n\n" +
+"- Si el paciente tiene goteo de nitroglicerina, traer con dos accesos venosos un N°18 y un N°20°.\n\n" +
 "Recuerde ademas: " + val("comentarios");
 
 document.getElementById("mensajePaciente").innerText = mensaje;
