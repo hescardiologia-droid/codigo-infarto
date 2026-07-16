@@ -231,6 +231,23 @@ border-radius:8px;
   
 <div class="section">
 
+<h3>11. Electrocardiograma</h3>
+
+<label>Hora en que se tomo el EKG</label>
+<input type="datetime-local" id="fechaEkg" onchange="calcularHoraEkg()">
+  
+<label>Tiempo desde el PCM a la toma del EKG</label>
+<div class="result" id="horaEkg">No calculado</div>
+
+<label>Electrocardiograma Inicial</label>
+<input type="file" id="ekgFile" accept="image/*">
+
+<img id="ekgPreview" style="display:none">
+
+</div>
+
+<div class="section">
+  
 <label for="trombolitico">7. Trombolítico utilizado</label>
 
 <select id="trombolitico" name="trombolitico" onchange="mostrarOtro()">
@@ -267,6 +284,15 @@ border-radius:8px;
 <option>NO</option>  
 
 </select>
+
+ <div class="section">
+  
+<label>Electrocardiograma Control o Post-trombolisis</label>
+<input type="file" id="ecgconFile" accept="image/*">
+
+<img id="ecgconPreview" style="display:none">
+
+</div> 
   
 <div class="section">
 
@@ -313,7 +339,6 @@ border-radius:8px;
 <textarea id="sintomas"></textarea>
 
 
-
 </div>
 
 <div class="section">
@@ -357,28 +382,6 @@ border-radius:8px;
 <option>INESTABLE</option>  
   
 </select>
-
-</div>
-
-<div class="section">
-
-<h3>11. Electrocardiograma</h3>
-
-<label>Hora en que se tomo el EKG</label>
-<input type="datetime-local" id="fechaEkg" onchange="calcularHoraEkg()">
-  
-<label>Tiempo desde el PCM a la toma del EKG</label>
-<div class="result" id="horaEkg">No calculado</div>
-
-<label>Electrocardiograma Inicial</label>
-<input type="file" id="ekgFile" accept="image/*">
-
-<img id="ekgPreview" style="display:none">
-
-<label>Electrocardiograma Control o Post-trombolisis</label>
-<input type="file" id="ecgconFile" accept="image/*">
-
-<img id="ecgconPreview" style="display:none">
 
 </div>
 
