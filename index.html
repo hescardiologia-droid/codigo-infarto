@@ -247,8 +247,19 @@ border-radius:8px;
 </div>
 
 <div class="section">
+
+<h3>7. Manejo o estrategia a seguir</h3>
+
+<select id="Manejo" style="width:100%">
+
+<option>ICP Primaria</option>
+<option>Estrategia farmaco invasiva + ICP </option>
+<option>ICP de Rescate</option>
+<option>Fuera de Protocolo</option>
   
-<label for="trombolitico">7. Trombolítico utilizado</label>
+</select>
+  
+<label for="trombolitico">Trombolítico utilizado</label>
 
 <select id="trombolitico" name="trombolitico" onchange="mostrarOtro()">
   <option value="">Seleccione una opción</option>
@@ -895,7 +906,8 @@ addSection("4. Tiempo de evolución",
 );
 
 // TROMBOLISIS
-addSection("5. Trombolisis",
+addSection("5. Manejo y estrategia a seguir",
+"Menejo o estrategia a seguir: " = (val("Manejo") = "\n" +
 "Trombolítico utilizado: " + (val("trombolitico") === "OTRO" ? val("otroTrombolitico") : val("trombolitico")) + "\n" +
 "con cuantas horas de dolor se trombolizo: " + val("horasDolor") + "\n" +
 "Exitosa: " + val("exitosa") + "\n"
