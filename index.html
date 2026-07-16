@@ -192,8 +192,25 @@ border-radius:8px;
 <label>3. Teléfono de contacto</label>
 <input id="telefono">
 
-<label>4. Nombre del paciente</label>
+<h3>4. Datos de Identificación</h3>
+
+<label>Nombre del paciente</label>
 <input id="nombre">
+
+<label>Edad</label>
+<input id="edad">
+
+<label>Sexo</label>
+<select id="sexo" style="width:100%">
+
+<option></option>
+<option>MASCULINO</option>
+<option>FEMENINO</option>  
+
+</select>
+
+<label>Antecedentes médicos relevantes</label>
+<textarea id="antecedentes"></textarea>
   
 <label>5. Diagnóstico</label>
 
@@ -258,6 +275,7 @@ border-radius:8px;
 <option>Estrategia farmaco invasiva + ICP </option>
 <option>ICP de Rescate</option>
 <option>Fuera de Protocolo</option>
+<option>ICP en IAM Sin Elevacion de ST</option>
   
 </select>
   
@@ -289,7 +307,7 @@ border-radius:8px;
 <label>Tiempo desde el PCM hasta la trombolisis</label>
 <div class="result" id="pcmtrombo">No calculado</div>
   
-<label>¿Exitosa? hubo disminucion del segmento ST en derivaciones afectadas</label>
+<label>¿Exitosa?</label>
 <select id="exitosa" style="width:100%">
 
 <option></option>
@@ -309,19 +327,7 @@ border-radius:8px;
   
 <div class="section">
 
-<h3>8. Datos del paciente</h3>
-
-<label>Edad</label>
-<input id="edad">
-
-<label>Sexo</label>
-<select id="sexo" style="width:100%">
-
-<option></option>
-<option>MASCULINO</option>
-<option>FEMENINO</option>  
-
-</select>
+<h3>8. Informacion del paciente</h3>
 
 <label>Peso</label>
 <input id="peso">
@@ -338,9 +344,6 @@ border-radius:8px;
 <input type="file" id="reversoFile" accept="image/*">
 
 <img id="reversoPreview" style="display:none"> 
-  
-<label>Antecedentes médicos relevantes</label>
-<textarea id="antecedentes"></textarea>
 
 </div>
 
