@@ -272,7 +272,7 @@ border-radius:8px;
 
 <option></option>
 <option>ICP Primaria</option>
-<option>Estrategia farmaco invasiva + ICP </option>
+<option>Estrategia farmaco invasiva + ICP (Se descarton contrindicaciones de trombolisis)</option>
 <option>ICP de Rescate</option>
 <option>Fuera de Protocolo</option>
 <option>ICP en IAM Sin Elevacion de ST</option>
@@ -458,31 +458,10 @@ border-radius:8px;
 
 </select>
 </div>
-
-<div class="section">
-
-<h3>14. Otros</h3>
-
-<label for="contraindi">Contraindicaciones para anticoagulante o trombolítico</label>
-
-<select id="contraindi" name="contraindi" onchange="mostrarOtro_contra()">
-  <option value="">Seleccione una opción</option>
-  <option value="NO">NO</option>
-  <option value="SI">SI</option>
-</select>
-
-<br><br>
-
-<div id="siContraindiDiv" style="display:none;">
-  <label for="siContraindiInput">Especifique:</label>
-  <input type="text" id="siContraindiInput" name="siContraindiInput">
-</div>
-
-</div>  
   
 <div class="section">
 
-<h3>15. Resolución</h3>
+<h3>14. Resolución</h3>
 
 <textarea id="resolucion"></textarea>
 
@@ -956,18 +935,13 @@ addSection("10. Logística y transporte",
 "¿Necesita transporte? " + val("transorte") + val("ambulancia") + "\n"
 );
 
-// CONTRA
-addSection("11. Contraindicaciones para el uso de trombolitico o anticoagulante",
-val("contraindi") === "SI" ? val("siContraindiInput") : "No" + "\n"
-);
-
 // RESOLUCION
-addSection("12. Resolución",
+addSection("11. Resolución",
 "Paciente se acepta para: " + val("resolucion") + val("comentarios") + "\n"
 );
 
 // MEDICO
-addSection("13. Médico que atiende",
+addSection("12. Médico que atiende",
 "Medico: " + val("dr_atiende") + "\n" +
 "Tel: " + val("tel_atiende") + "\n"
 );
