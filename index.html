@@ -494,15 +494,25 @@ border-radius:8px;
 
 </select> 
 
+
 <label>Destino</label>
-<select id="destino" style="width:100%">
 
-<option></option>
-<option>Sala de Cateterismo HNES, por porton 1, sin pasar por Emergencias</option>
-<option>Unidad de Emergencia HNES y posterior ingreso a Servicio de Cardiologia</option>
-<option>Unidad de Emergencia HNES y posterior ingreso a Unidad de Cuidados Intensivos</option>  
+<select id="destino" style="width:100%" onchange="generarMensajePaciente()">
+    <option value="">Seleccione un destino</option>
 
-</select> 
+    <option value="Sala de Cateterismo HNES, por porton 1, sin pasar por Emergencias">
+        Sala de Cateterismo HNES, por porton 1, sin pasar por Emergencias
+    </option>
+
+    <option value="Unidad de Emergencia HNES y posterior ingreso a Servicio de Cardiologia">
+        Unidad de Emergencia HNES y posterior ingreso a Servicio de Cardiologia
+    </option>
+
+    <option value="Unidad de Emergencia HNES y posterior ingreso a Unidad de Cuidados Intensivos">
+        Unidad de Emergencia HNES y posterior ingreso a Unidad de Cuidados Intensivos
+    </option>
+</select>
+
   
 <h4>EKG</h4>
 
@@ -1130,25 +1140,73 @@ console.error(err);
 }
 
 
-function generarMensajePaciente(){
+function generarMensajePaciente() {
+    const destino = val("destino");
+    const resolucion = val("resolucion");
+    const comentarios = val("comentarios");
 
-let mensaje = 
-"Su paciente ha sido aceptado para " + val("resolucion") + ", le comparto las indicaciones a seguir:\n\n" +
-"- Llenar el siguiente formulario con la información de su paciente: https://forms.gle/eRAWQZaQwkAWk5JV9\n" +
-"- No hacer referencia por el SIS, hacerlo solamente en físico y entregarlo en sala de cateterismo\n" +
-"- " + val("destino") + "\n" +
-"- Paciente debe venir acompañado por médico y personal de enfermeria.\n" +
-"- Traer consentimiento informado impreso y firmado por el paciente y|o familiar responsable\n" +
-"- Explicar adecuadamente al paciente el procedimiento al que sera sometido\n" +
-"- Un familiar responsable puede acompañar al paciente en la ambulancia si estuviese disponible y fuese posible (no es obligatorio)\n" +
-"- Enviar RESUMEN MÉDICO por este medio.\n" +
-"- El paciente debe acudir rasurado de ambas ingles y ambas muñecas.\n" +
-"- Si el paciente tiene goteo de nitroglicerina, traer con dos accesos venosos un N°18 y un N°20°.\n\n" +
-"Recuerde ademas: " + val("comentarios");
+    let mensaje = "";
 
-document.getElementById("mensajePaciente").innerText = mensaje;
+    // Indicaciones comunes para todos los destinos
+    const indicacionesComunes =
+        "Su paciente ha sido aceptado para " + resolucion +
+        ", le comparto las indicaciones a seguir:\n\n" +
 
+        "- Llenar el siguiente formulario con la información de su paciente:\n" +
+        "https://forms.gle/eRAWQZaQwkAWk5JV9\n" +
+
+        "- Indicar al motorista de la ambulancia y al médico que acompañará " +
+        "a su paciente que se dirigen a " + destino + ".\n" +
+
+        "- El paciente debe venir acompañado por médico y personal de enfermería.\n" +
+
+        "- Traer consentimiento informado impreso y firmado por el paciente " +
+        "o familiar responsable.\n" +
+
+        "- Explicar adecuadamente al paciente el procedimiento al que será sometido.\n" +
+
+        "- Un familiar responsable puede acompañar al paciente en la ambulancia " +
+        "si está disponible y es posible (no es obligatorio).\n" +
+
+        "- Enviar RESUMEN MÉDICO por este medio.\n";
+
+    // Indicaciones específicas según el destino
+    if (destino === "Sala de Cateterismo HNES, por porton 1, sin pasar por Emergencias") {
+
+        mensaje = indicacionesComunes +
+
+        "- No hacer referencia por el SIS. Hacerla solamente en físico y " +
+        "entregarla en sala de cateterismo.\n" +
+
+        "- El paciente debe acudir rasurado de ambas ingles y ambas muñecas.\n" +
+
+        "- Si el paciente tiene goteo de nitroglicerina, traer dos accesos venosos: " +
+        "uno N.º 18 y otro N.º 20.\n\n";
+
+    } else if (
+        destino === "Unidad de Emergencia HNES y posterior ingreso a Servicio de Cardiologia" ||
+        destino === "Unidad de Emergencia HNES y posterior ingreso a Unidad de Cuidados Intensivos"
+    ) {
+
+        mensaje = indicacionesComunes +
+
+        "- Hacer referencia en el SIS.\n" +
+
+        "- Si el paciente tiene goteo de nitroglicerina, traer dos accesos venosos: " +
+        "uno N.º 18 y otro N.º 20.\n\n";
+
+    } else {
+        mensaje = "Seleccione un destino para generar las indicaciones.";
+    }
+
+    // Agregar comentarios finales, si existen
+    if (comentarios.trim() !== "") {
+        mensaje += "Recuerde además: " + comentarios;
+    }
+
+    document.getElementById("mensajePaciente").innerText = mensaje;
 }
+
 
 function generarMensajeChat(){
 
