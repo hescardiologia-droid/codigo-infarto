@@ -12,7 +12,6 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-
 <script>
 window.CONFIG_NUBE = {
   url:   "https://script.google.com/macros/s/AKfycby4cX6dBDDqB8LQnQIL-_hszJ74HRUVYqPfwOqIEJMgLLNzp-JXX-M2lIgiT3-WSTz6/exec",                   // URL de la aplicación web de Apps Script (termina en /exec)
@@ -168,6 +167,37 @@ background:#f6f6f6;
 .estado-nube.ok{ background:#e6f6ea; color:#1d6b33; }
 .estado-nube.error{ background:#fdeaea; color:#8a1c1c; }
 
+/* Editor de imágenes */
+button.btn-editar{ margin-top:8px; }
+.editor-modal{
+position:fixed; inset:0; z-index:9999;
+background:rgba(0,0,0,0.75);
+display:flex; align-items:center; justify-content:center;
+padding:10px; box-sizing:border-box;
+}
+.editor-caja{
+background:#fff; border-radius:10px; padding:16px;
+width:100%; max-width:950px; max-height:100%;
+overflow:auto; box-sizing:border-box;
+}
+.editor-caja h3{ margin:0 0 10px 0; }
+.editor-lienzo{
+display:flex; justify-content:center;
+background:#333; border-radius:6px; padding:6px; box-sizing:border-box;
+}
+#editorCanvas{ touch-action:none; cursor:crosshair; max-width:100%; }
+.editor-ayuda{ font-size:13px; color:#666; margin:8px 0 0 0; }
+.editor-controles{
+display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:10px;
+}
+.editor-controles label{
+display:flex; align-items:center; gap:6px;
+margin:0; font-weight:normal; font-size:14px;
+}
+.editor-controles input[type=range]{ width:170px; padding:0; margin:0; }
+.editor-acciones{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px; }
+.editor-acciones button{ width:auto; margin-top:0; padding:10px 18px; }
+
 </style>
 
 </head>
@@ -193,7 +223,7 @@ background:#f6f6f6;
 <button type="button" class="btn-sec" onclick="nuevoPaciente()">Nuevo paciente (limpiar formulario)</button>
 </div>
 
-<label>Fecha y hora de llamada</label>
+<label>0. Fecha y hora de llamada</label>
 <input type="datetime-local" id="llamada">
 
 <label>1. Hospital que presenta</label>
@@ -311,6 +341,7 @@ background:#f6f6f6;
 <input type="file" id="ekgFile" accept="image/*">
 
 <img id="ekgPreview" style="display:none">
+<button type="button" class="btn-sec btn-editar" id="ekgEditar" style="display:none" onclick="abrirEditor('ekgFile')">Editar imagen (girar / recortar)</button>
 
 </div>
 
@@ -373,6 +404,7 @@ background:#f6f6f6;
 <input type="file" id="ecgconFile" accept="image/*">
 
 <img id="ecgconPreview" style="display:none">
+<button type="button" class="btn-sec btn-editar" id="ecgconEditar" style="display:none" onclick="abrirEditor('ecgconFile')">Editar imagen (girar / recortar)</button>
 
 </div> 
   
@@ -390,11 +422,13 @@ background:#f6f6f6;
 <input type="file" id="duiFile" accept="image/*">
 
 <img id="duiPreview" style="display:none">
+<button type="button" class="btn-sec btn-editar" id="duiEditar" style="display:none" onclick="abrirEditor('duiFile')">Editar imagen (girar / recortar)</button>
 
 <label>Reverso del DUI</label>
 <input type="file" id="reversoFile" accept="image/*">
 
-<img id="reversoPreview" style="display:none"> 
+<img id="reversoPreview" style="display:none">
+<button type="button" class="btn-sec btn-editar" id="reversoEditar" style="display:none" onclick="abrirEditor('reversoFile')">Editar imagen (girar / recortar)</button> 
 
 </div>
 
@@ -559,7 +593,7 @@ background:#f6f6f6;
     </option>
 
     <option value="Unidad de Emergencia HNES y posterior ingreso a Unidad de Cuidados Intensivos">
-        Unidad de Emergencia HNES y posterior ingreso a Unidad de Cuidados Intensivos Coronario
+        Unidad de Emergencia HNES y posterior ingreso a Unidad de Cuidados Intensivos
     </option>
 </select>
 
@@ -596,6 +630,28 @@ Generar mensaje para médico</button>
 <button type="button" onclick="generarMensajeChat()">
 Generar mensaje para chat</button>
   
+<!-- ================== EDITOR DE IMÁGENES ================== -->
+<div id="editorModal" class="editor-modal" style="display:none">
+<div class="editor-caja">
+<h3>Editar imagen</h3>
+<div class="editor-lienzo"><canvas id="editorCanvas"></canvas></div>
+<p class="editor-ayuda">Arrastre sobre la imagen para marcar el área a recortar. Arrastre dentro del recuadro para moverlo o desde una esquina para ajustarlo.</p>
+<div class="editor-controles">
+<button type="button" class="btn-sec" onclick="editorGirar(-90)">&#8634; Girar izquierda</button>
+<button type="button" class="btn-sec" onclick="editorGirar(90)">&#8635; Girar derecha</button>
+<label>Enderezar
+<input type="range" id="editorFino" min="-15" max="15" step="0.5" value="0" oninput="editorFinoCambio(this.value)">
+<span id="editorFinoVal">0°</span></label>
+<button type="button" class="btn-sec" onclick="editorQuitarRecorte()">Quitar recorte</button>
+<button type="button" class="btn-sec" onclick="editorRestablecer()">Volver a la original</button>
+</div>
+<div class="editor-acciones">
+<button type="button" class="btn-sec" onclick="editorCerrar()">Cancelar</button>
+<button type="button" onclick="editorGuardar()">Guardar cambios</button>
+</div>
+</div>
+</div>
+
 <script>
 
 function calcularTiempoDolor(){
@@ -772,6 +828,8 @@ function mostrarImagen(inputId, dataUrl){
   prev.src = dataUrl;
   prev.style.display = "block";
   document.getElementById(finalId).src = dataUrl;
+  const btnEditar = document.getElementById(inputId.replace("File", "Editar"));
+  if(btnEditar) btnEditar.style.display = "block";
 }
 
 Object.keys(IMG_FIELDS).forEach(inputId => {
@@ -782,6 +840,7 @@ Object.keys(IMG_FIELDS).forEach(inputId => {
       const dataUrl = await leerImagen(file);
       mostrarImagen(inputId, dataUrl);
       await idbSet(inputId, dataUrl);
+      await idbSet(inputId + "_original", dataUrl); // para "Volver a la original"
       mostrarEstadoGuardado();
     } catch(err){
       console.error(err);
@@ -789,6 +848,219 @@ Object.keys(IMG_FIELDS).forEach(inputId => {
     }
   });
 });
+
+// ================== EDITOR: GIRAR / ENDEREZAR / RECORTAR ==================
+const editor = {
+  inputId: null,   // qué imagen se edita
+  img: null,       // imagen de partida
+  rot: 0,          // giro en pasos de 90°
+  fino: 0,         // enderezado fino (-15° a 15°)
+  rotado: null,    // lienzo con la imagen ya girada (tamaño real)
+  escala: 1,       // escala de pantalla
+  crop: null,      // {x,y,w,h} en píxeles de "rotado"
+  drag: null
+};
+
+function editorCargar(dataUrl){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("No se pudo abrir la imagen"));
+    img.src = dataUrl;
+  });
+}
+
+async function abrirEditor(inputId){
+  const src = document.getElementById(IMG_FIELDS[inputId][1]).src;
+  if(!src || !src.startsWith("data:image")) return;
+  editor.inputId = inputId;
+  editor.img = await editorCargar(src);
+  editorReiniciarAjustes();
+  document.getElementById("editorModal").style.display = "flex";
+  document.body.style.overflow = "hidden";
+  editorConstruir();
+}
+
+function editorReiniciarAjustes(){
+  editor.rot = 0; editor.fino = 0; editor.crop = null;
+  document.getElementById("editorFino").value = 0;
+  document.getElementById("editorFinoVal").innerText = "0°";
+}
+
+function editorCerrar(){
+  document.getElementById("editorModal").style.display = "none";
+  document.body.style.overflow = "";
+  editor.img = null; editor.rotado = null; editor.drag = null;
+}
+
+// Dibuja la imagen girada en un lienzo del tamaño necesario (fondo blanco)
+function editorConstruir(){
+  const ang = (editor.rot + editor.fino) * Math.PI / 180;
+  const w = editor.img.width, h = editor.img.height;
+  const cos = Math.abs(Math.cos(ang)), sin = Math.abs(Math.sin(ang));
+  const W = Math.round(w * cos + h * sin), H = Math.round(w * sin + h * cos);
+  const c = document.createElement("canvas");
+  c.width = W; c.height = H;
+  const ctx = c.getContext("2d");
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0, 0, W, H);
+  ctx.translate(W / 2, H / 2);
+  ctx.rotate(ang);
+  ctx.drawImage(editor.img, -w / 2, -h / 2);
+  editor.rotado = c;
+  editor.crop = null; // al girar se reinicia el recorte
+  editorDibujar();
+}
+
+function editorDibujar(){
+  const r = editor.rotado;
+  if(!r) return;
+  const cv = document.getElementById("editorCanvas");
+  const cont = cv.parentElement;
+  const maxW = Math.max(200, cont.clientWidth - 12);
+  const maxH = Math.max(200, window.innerHeight * 0.6);
+  const s = Math.min(maxW / r.width, maxH / r.height, 1);
+  editor.escala = s;
+  cv.width = Math.round(r.width * s);
+  cv.height = Math.round(r.height * s);
+  const ctx = cv.getContext("2d");
+  ctx.drawImage(r, 0, 0, cv.width, cv.height);
+
+  if(editor.crop){
+    const x = editor.crop.x * s, y = editor.crop.y * s, w = editor.crop.w * s, h = editor.crop.h * s;
+    ctx.fillStyle = "rgba(0,0,0,0.55)";
+    ctx.fillRect(0, 0, cv.width, y);
+    ctx.fillRect(0, y + h, cv.width, cv.height - y - h);
+    ctx.fillRect(0, y, x, h);
+    ctx.fillRect(x + w, y, cv.width - x - w, h);
+    ctx.strokeStyle = "#ff3b3b";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.strokeRect(x, y, w, h);
+    ctx.setLineDash([]);
+    ctx.fillStyle = "#ff3b3b";
+    [[x, y], [x + w, y], [x, y + h], [x + w, y + h]].forEach(([px, py]) => ctx.fillRect(px - 6, py - 6, 12, 12));
+  }
+}
+
+function editorGirar(grados){
+  editor.rot = (editor.rot + grados + 360) % 360;
+  editorConstruir();
+}
+
+function editorFinoCambio(v){
+  editor.fino = parseFloat(v) || 0;
+  document.getElementById("editorFinoVal").innerText = editor.fino + "°";
+  editorConstruir();
+}
+
+function editorQuitarRecorte(){
+  editor.crop = null;
+  editorDibujar();
+}
+
+async function editorRestablecer(){
+  let original = null;
+  try { original = await idbGet(editor.inputId + "_original"); } catch(e){}
+  if(original) editor.img = await editorCargar(original);
+  editorReiniciarAjustes();
+  editorConstruir();
+}
+
+// Punto del puntero en píxeles de la imagen girada
+function editorPunto(e){
+  const cv = document.getElementById("editorCanvas");
+  const rect = cv.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (cv.width / rect.width) / editor.escala;
+  const y = (e.clientY - rect.top) * (cv.height / rect.height) / editor.escala;
+  return {
+    x: Math.max(0, Math.min(editor.rotado.width, x)),
+    y: Math.max(0, Math.min(editor.rotado.height, y))
+  };
+}
+
+(function(){
+  const cv = document.getElementById("editorCanvas");
+
+  cv.addEventListener("pointerdown", e => {
+    if(!editor.rotado) return;
+    e.preventDefault();
+    cv.setPointerCapture(e.pointerId);
+    const p = editorPunto(e);
+    const c = editor.crop;
+    const tol = 22 / editor.escala; // margen para tocar una esquina
+
+    if(c){
+      const esquinas = [
+        {x: c.x, y: c.y, opuesta: {x: c.x + c.w, y: c.y + c.h}},
+        {x: c.x + c.w, y: c.y, opuesta: {x: c.x, y: c.y + c.h}},
+        {x: c.x, y: c.y + c.h, opuesta: {x: c.x + c.w, y: c.y}},
+        {x: c.x + c.w, y: c.y + c.h, opuesta: {x: c.x, y: c.y}}
+      ];
+      const esq = esquinas.find(q => Math.abs(q.x - p.x) < tol && Math.abs(q.y - p.y) < tol);
+      if(esq){ editor.drag = {modo: "nuevo", inicio: esq.opuesta}; return; }
+      if(p.x > c.x && p.x < c.x + c.w && p.y > c.y && p.y < c.y + c.h){
+        editor.drag = {modo: "mover", inicio: p, original: {...c}};
+        return;
+      }
+    }
+    editor.drag = {modo: "nuevo", inicio: p};
+    editor.crop = {x: p.x, y: p.y, w: 0, h: 0};
+  });
+
+  cv.addEventListener("pointermove", e => {
+    const d = editor.drag;
+    if(!d) return;
+    const p = editorPunto(e);
+    if(d.modo === "nuevo"){
+      editor.crop = {
+        x: Math.min(d.inicio.x, p.x), y: Math.min(d.inicio.y, p.y),
+        w: Math.abs(p.x - d.inicio.x), h: Math.abs(p.y - d.inicio.y)
+      };
+    } else {
+      const o = d.original, R = editor.rotado;
+      editor.crop = {
+        x: Math.max(0, Math.min(R.width - o.w, o.x + p.x - d.inicio.x)),
+        y: Math.max(0, Math.min(R.height - o.h, o.y + p.y - d.inicio.y)),
+        w: o.w, h: o.h
+      };
+    }
+    editorDibujar();
+  });
+
+  const terminar = () => {
+    if(!editor.drag) return;
+    editor.drag = null;
+    if(editor.crop && (editor.crop.w < 15 || editor.crop.h < 15)) editor.crop = null; // toque accidental
+    editorDibujar();
+  };
+  cv.addEventListener("pointerup", terminar);
+  cv.addEventListener("pointercancel", terminar);
+
+  window.addEventListener("resize", editorDibujar);
+  document.addEventListener("keydown", e => {
+    if(e.key === "Escape" && document.getElementById("editorModal").style.display === "flex") editorCerrar();
+  });
+})();
+
+async function editorGuardar(){
+  const R = editor.rotado;
+  if(!R) return;
+  const c = editor.crop || {x: 0, y: 0, w: R.width, h: R.height};
+  const out = document.createElement("canvas");
+  out.width = Math.max(1, Math.round(c.w));
+  out.height = Math.max(1, Math.round(c.h));
+  out.getContext("2d").drawImage(R, c.x, c.y, c.w, c.h, 0, 0, out.width, out.height);
+  const dataUrl = out.toDataURL("image/jpeg", 0.9);
+
+  const inputId = editor.inputId;
+  mostrarImagen(inputId, dataUrl);
+  editorCerrar();
+  try {
+    await idbSet(inputId, dataUrl);
+    mostrarEstadoGuardado();
+  } catch(err){ console.error(err); }
+}
 
 // ================== AUTOGUARDADO ==================
 // Texto y selecciones -> localStorage. Imágenes -> IndexedDB (más espacio).
