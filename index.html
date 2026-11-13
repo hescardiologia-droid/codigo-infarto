@@ -4,7 +4,18 @@
 <head>
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Registro Código Infarto</title>
+
+<!-- Instalación como aplicación (PWA) -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#b30000">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Código Infarto">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 
 <script src="https://unpkg.com/docx@7.7.0/build/index.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -167,6 +178,59 @@ background:#f6f6f6;
 .estado-nube.ok{ background:#e6f6ea; color:#1d6b33; }
 .estado-nube.error{ background:#fdeaea; color:#8a1c1c; }
 
+/* Teléfonos */
+@media (max-width: 600px){
+.container{ margin-top:0; padding:16px; border-radius:0; }
+.header{ flex-direction:column; text-align:center; }
+.logo{ width:140px; }
+.header h1{ font-size:20px; }
+h2{ font-size:18px; margin-bottom:16px; }
+}
+input, textarea, select{ box-sizing:border-box; font-size:16px; }
+select{ width:100%; padding:8px; margin-top:5px; border-radius:5px; border:1px solid #ccc; background:#fff; }
+
+/* Aviso de instalación */
+.aviso-instalar{
+display:none; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+background:#fff4e5; border:1px solid #ffd59e; border-radius:6px;
+padding:8px 12px; margin-bottom:10px; font-size:14px; color:#6b4300;
+}
+
+/* Aviso de contraindicaciones (solo en pantalla, no va al Word) */
+.aviso-contra{
+display:none; margin-top:12px; padding:12px 14px;
+background:#fff4e5; border-left:5px solid #e08a00; border-radius:6px;
+color:#5a3a00; font-size:15px;
+}
+.aviso-contra strong{ display:block; margin-bottom:6px; }
+.aviso-contra ul{ margin:0; padding-left:20px; }
+
+/* Lista de verificación desplegable */
+.checklist{ position:relative; margin-top:5px; }
+button.checklist-boton{
+width:100%; margin:0; padding:9px 34px 9px 10px;
+background:#fff; color:#222; border:1px solid #ccc; border-radius:5px;
+font-size:15px; text-align:left; position:relative;
+}
+button.checklist-boton:hover{ background:#fafafa; }
+button.checklist-boton::after{
+content:"\25BE"; position:absolute; right:12px; top:50%; transform:translateY(-50%); color:#666;
+}
+.checklist-boton.vacio{ color:#888; }
+.checklist-panel{
+display:none; border:1px solid #ccc; border-top:none; border-radius:0 0 5px 5px;
+background:#fff; padding:6px 10px 10px; max-height:340px; overflow:auto;
+}
+.checklist.abierta .checklist-panel{ display:block; }
+.checklist-panel h5{ margin:10px 0 4px; color:#b30000; font-size:13px; text-transform:uppercase; }
+.checklist-panel label.check{
+display:flex; align-items:center; gap:10px;
+font-weight:normal; margin:0; padding:7px 4px; cursor:pointer; border-radius:4px;
+}
+.checklist-panel label.check:hover{ background:#f3f6fa; }
+.checklist-panel input[type=checkbox]{ width:18px; height:18px; margin:0; padding:0; flex:none; }
+.otro-caja{ display:none; }
+
 /* Editor de imágenes */
 button.btn-editar{ margin-top:8px; }
 .editor-modal{
@@ -217,6 +281,14 @@ margin:0; font-weight:normal; font-size:14px;
 </div>
 
 <h2>Hospital Nacional El Salvador</h2>
+
+<div class="aviso-instalar" id="avisoInstalar">
+<span id="avisoInstalarTexto">Puede instalar este formulario como aplicación en su teléfono.</span>
+<span>
+<button type="button" class="btn-sec" id="btnInstalar" style="display:none" onclick="instalarApp()">Instalar aplicación</button>
+<button type="button" class="btn-sec" onclick="cerrarAvisoInstalar()">Ahora no</button>
+</span>
+</div>
 
 <div class="barra-guardado">
 <span id="estadoGuardado">Autoguardado activo: la información se conserva en este dispositivo aunque se cierre o recargue la página.</span>
@@ -291,7 +363,11 @@ margin:0; font-weight:normal; font-size:14px;
 </select>
 
 <label>Antecedentes médicos relevantes</label>
-<textarea id="antecedentes"></textarea>
+<div class="checklist" id="antecedentesLista"></div>
+<div class="otro-caja" id="antecedentesOtroCaja">
+<label for="antecedentesOtro">Otros antecedentes (especifique)</label>
+<input id="antecedentesOtro">
+</div>
   
 <label>5. Diagnóstico</label>
 
@@ -360,6 +436,19 @@ margin:0; font-weight:normal; font-size:14px;
 <option>ICP en IAM Sin Elevacion de ST</option>
   
 </select>
+
+<div class="aviso-contra" id="avisoContraindicaciones">
+<strong>Se deben descartar las siguientes contraindicaciones de trombólisis:</strong>
+<ul>
+<li>Sangrado activo</li>
+<li>Cirugía reciente</li>
+<li>Hipertensión arterial severa</li>
+<li>ACV previo reciente</li>
+<li>Disección aórtica</li>
+<li>Trauma craneoencefálico</li>
+<li>Uso de anticoagulantes (ej. warfarina)</li>
+</ul>
+</div>
   
 <label for="trombolitico">Trombolítico utilizado</label>
 
@@ -436,8 +525,12 @@ margin:0; font-weight:normal; font-size:14px;
 
 <h3>9. Síntomas actuales</h3>
 
-<label>Síntomas</label>
-<textarea id="sintomas"></textarea>
+<label>Signos y síntomas</label>
+<div class="checklist" id="sintomasLista"></div>
+<div class="otro-caja" id="sintomasOtroCaja">
+<label for="sintomasOtro">Otros signos o síntomas (especifique)</label>
+<input id="sintomasOtro">
+</div>
 
 
 </div>
@@ -548,7 +641,15 @@ margin:0; font-weight:normal; font-size:14px;
 
 <h3>14. Resolución</h3>
 
-<textarea id="resolucion"></textarea>
+<label for="resolucion">Resolución</label>
+<select id="resolucion" style="width:100%">
+<option value="">Seleccione la resolución</option>
+<option>ICP</option>
+<option>ICP Primaria</option>
+<option>ICP de rescate</option>
+<option>ICP post trombólisis</option>
+<option>Trombólisis y posterior ICP</option>
+</select>
 
 <label>Comentarios e indicaciones extras</label>
 <input id="comentarios">
@@ -593,7 +694,7 @@ margin:0; font-weight:normal; font-size:14px;
     </option>
 
     <option value="Unidad de Emergencia HNES y posterior ingreso a Unidad de Cuidados Intensivos">
-        Unidad de Emergencia HNES y posterior ingreso a Unidad de Cuidados Intensivos
+        Unidad de Emergencia HNES y posterior ingreso a Unidad de Cuidados Intensivos Coronarios
     </option>
 </select>
 
@@ -849,6 +950,154 @@ Object.keys(IMG_FIELDS).forEach(inputId => {
   });
 });
 
+// ================== LISTAS DE VERIFICACIÓN ==================
+const LISTAS = {
+  antecedentes: {
+    prefijo: "ant_",
+    grupos: [{ titulo: null, opciones: [
+      "DM2", "HTA-c", "ERC", "ICC", "Fibrilación auricular previa",
+      "Bloqueo auriculoventricular previo", "Infarto previo", "Tabaquista",
+      "ACV previo", "Enfermedad valvular conocida", "Aneurisma o disección aórtica", "Otro"
+    ]}]
+  },
+  sintomas: {
+    prefijo: "sin_",
+    grupos: [
+      { titulo: "Signos", opciones: [
+        "Estertores", "Síncope", "Taquicardia", "Bradicardia", "Estado mental alterado",
+        "Llenado capilar mayor de 2 seg", "Cianosis", "Extremidades frías",
+        "Edema de miembros inferiores", "Vómitos"
+      ]},
+      { titulo: "Síntomas", opciones: [
+        "Disnea", "Dolor precordial", "Diaforesis", "Palpitaciones", "Náuseas", "Mareos"
+      ]},
+      { titulo: null, opciones: ["Otro"] }
+    ]
+  }
+};
+
+function crearChecklist(nombre){
+  const cfg = LISTAS[nombre];
+  const cont = document.getElementById(nombre + "Lista");
+  const boton = document.createElement("button");
+  boton.type = "button";
+  boton.className = "checklist-boton";
+  boton.onclick = () => cont.classList.toggle("abierta");
+  const panel = document.createElement("div");
+  panel.className = "checklist-panel";
+  let i = 0;
+  cfg.grupos.forEach(g => {
+    if(g.titulo){
+      const h = document.createElement("h5");
+      h.innerText = g.titulo;
+      panel.appendChild(h);
+    }
+    g.opciones.forEach(op => {
+      const lab = document.createElement("label");
+      lab.className = "check";
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.id = cfg.prefijo + (i++);
+      cb.value = op;
+      cb.dataset.grupo = g.titulo || "";
+      cb.addEventListener("change", () => actualizarChecklist(nombre));
+      lab.appendChild(cb);
+      lab.appendChild(document.createTextNode(op));
+      panel.appendChild(lab);
+    });
+  });
+  cont.appendChild(boton);
+  cont.appendChild(panel);
+  actualizarChecklist(nombre);
+}
+
+function checksMarcados(nombre){
+  return Array.from(document.querySelectorAll("#" + nombre + "Lista input[type=checkbox]:checked"));
+}
+
+// Texto de los seleccionados; "Otro" se reemplaza por lo escrito
+function checklistValores(nombre, grupo){
+  return checksMarcados(nombre)
+    .filter(cb => grupo === undefined || cb.dataset.grupo === grupo)
+    .map(cb => cb.value === "Otro" ? (val(nombre + "Otro").trim() || "Otro") : cb.value);
+}
+
+function actualizarChecklist(nombre){
+  const marcados = checksMarcados(nombre).map(cb => cb.value);
+  const boton = document.querySelector("#" + nombre + "Lista .checklist-boton");
+  boton.innerText = marcados.length ? marcados.join(", ") : "Seleccione una o varias opciones";
+  boton.classList.toggle("vacio", !marcados.length);
+  document.getElementById(nombre + "OtroCaja").style.display = marcados.includes("Otro") ? "block" : "none";
+}
+
+function actualizarChecklists(){ Object.keys(LISTAS).forEach(actualizarChecklist); }
+
+Object.keys(LISTAS).forEach(crearChecklist);
+
+// cerrar la lista al tocar fuera de ella
+document.addEventListener("click", e => {
+  document.querySelectorAll(".checklist.abierta").forEach(c => {
+    if(!c.contains(e.target)) c.classList.remove("abierta");
+  });
+});
+
+// ================== AVISO DE CONTRAINDICACIONES ==================
+function mostrarAvisoContraindicaciones(){
+  const v = val("Manejo").toLowerCase();
+  document.getElementById("avisoContraindicaciones").style.display =
+    v.includes("farmaco invasiva") ? "block" : "none";
+}
+document.getElementById("Manejo").addEventListener("change", mostrarAvisoContraindicaciones);
+
+// ================== INSTALAR COMO APLICACIÓN ==================
+let eventoInstalar = null;
+const esStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+const esIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+              (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+function avisoInstalarDescartado(){
+  try { return localStorage.getItem("ci_aviso_instalar") === "no"; } catch(e){ return false; }
+}
+function cerrarAvisoInstalar(){
+  document.getElementById("avisoInstalar").style.display = "none";
+  try { localStorage.setItem("ci_aviso_instalar", "no"); } catch(e){}
+}
+
+// Android / Chrome / Edge: el navegador ofrece la instalación
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();
+  eventoInstalar = e;
+  if(avisoInstalarDescartado()) return;
+  document.getElementById("btnInstalar").style.display = "inline-block";
+  document.getElementById("avisoInstalar").style.display = "flex";
+});
+
+async function instalarApp(){
+  if(!eventoInstalar) return;
+  eventoInstalar.prompt();
+  await eventoInstalar.userChoice;
+  eventoInstalar = null;
+  document.getElementById("avisoInstalar").style.display = "none";
+}
+
+window.addEventListener("appinstalled", () => {
+  document.getElementById("avisoInstalar").style.display = "none";
+});
+
+// iPhone / iPad: Safari no tiene botón automático, se muestran instrucciones
+if(esIOS && !esStandalone && !avisoInstalarDescartado()){
+  document.getElementById("avisoInstalarTexto").innerText =
+    "Para instalar en iPhone: abra esta página en Safari, toque Compartir y luego “Agregar a inicio”.";
+  document.getElementById("avisoInstalar").style.display = "flex";
+}
+
+// Service worker: permite instalar y abrir el formulario aunque falle la señal
+if("serviceWorker" in navigator && location.protocol.startsWith("http")){
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(err => console.warn("SW:", err));
+  });
+}
+
 // ================== EDITOR: GIRAR / ENDEREZAR / RECORTAR ==================
 const editor = {
   inputId: null,   // qué imagen se edita
@@ -1102,9 +1351,11 @@ function guardarBorrador(){
   const datos = { _caseId: caseId, _guardado: new Date().toISOString() };
   camposFormulario().forEach(el => {
     if(!el.id) return;
-    datos[el.id] = el.multiple
-      ? Array.from(el.selectedOptions).map(o => o.value)
-      : el.value;
+    datos[el.id] = el.type === "checkbox"
+      ? el.checked
+      : el.multiple
+        ? Array.from(el.selectedOptions).map(o => o.value)
+        : el.value;
   });
   try {
     localStorage.setItem(DRAFT_KEY, JSON.stringify(datos));
@@ -1138,7 +1389,9 @@ function restaurarBorrador(){
     if(id.startsWith("_")) return;
     const el = document.getElementById(id);
     if(!el || el.type === "file") return;
-    if(el.multiple && Array.isArray(valor)){
+    if(el.type === "checkbox"){
+      el.checked = !!valor;
+    } else if(el.multiple && Array.isArray(valor)){
       Array.from(el.options).forEach(o => o.selected = valor.includes(o.value));
     } else {
       el.value = valor;
@@ -1148,6 +1401,8 @@ function restaurarBorrador(){
   // refrescar los select2 sin disparar más guardados
   $("#hospital, #diagnostico").trigger("change.select2");
   mostrarOtro();
+  actualizarChecklists();
+  mostrarAvisoContraindicaciones();
   recalcularTiempos();
   if(val("destino")) generarMensajePaciente();
 
@@ -1321,7 +1576,7 @@ addSection("2. Informacion del paciente:",
 "- Sexo: " + val("sexo") + "\n" +
 "- Peso: " + val("peso") + "\n" +
 "- Talla: " + val("talla") + "\n" +
-"- Antecedentes: " + val("antecedentes") + "\n"
+"- Antecedentes: " + (checklistValores("antecedentes").join(", ") || "Ninguno referido") + "\n"
 );
 
 // DIAGNOSTICO
@@ -1346,6 +1601,9 @@ addSection("5. Manejo y estrategia a seguir",
 
 // SIGNOS
 addSection("6. Signos Vitales",
+"Signos: " + checklistValores("sintomas", "Signos").join(", ") + "\n" +
+"Síntomas: " + checklistValores("sintomas", "Síntomas").join(", ") + "\n" +
+(checklistValores("sintomas", "").length ? "Otros: " + checklistValores("sintomas", "").join(", ") + "\n" : "") +
 "Frecuencia cardiaca: " + val("fc") + "\n" +
 "Presion arterial: " + val("pa") + "\n" +
 "Frecuencia respiratoria: " + val("fr") + "\n" +
@@ -1384,7 +1642,8 @@ addSection("10. Logística y transporte",
 
 // RESOLUCION
 addSection("11. Resolución",
-"Paciente se acepta para: " + val("resolucion") + val("comentarios") + "\n"
+"Paciente se acepta para: " + val("resolucion") + "\n" +
+(val("comentarios") ? "Comentarios: " + val("comentarios") + "\n" : "")
 );
 
 // MEDICO
@@ -1723,6 +1982,11 @@ function construirRegistro(){
     "Paciente": val("nombre"),
     "Edad": val("edad"),
     "Sexo": val("sexo"),
+    "Antecedentes": checklistValores("antecedentes").join(", "),
+    ...Object.fromEntries(LISTAS.antecedentes.grupos[0].opciones
+        .filter(op => op !== "Otro")
+        .map(op => ["Ant: " + op, checksMarcados("antecedentes").some(cb => cb.value === op) ? "Sí" : "No"])),
+    "Signos y síntomas": checklistValores("sintomas").join(", "),
     "Peso": val("peso"),
     "Talla": val("talla"),
     "Diagnóstico": diagnosticosSeleccionados().join(", "),
@@ -1806,3 +2070,4 @@ async function reintentarEnvio(){
 
 </body>
 </html>
+
